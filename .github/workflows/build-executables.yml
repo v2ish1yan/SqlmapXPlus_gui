@@ -5,75 +5,75 @@ on:
       types:  [published]
 
 jobs:
-    build-and-release:
-      runs-on:  ubuntu-latest
+  build-and-release:
+  runs-on:  ubuntu-latest
 
-      steps:
-      -  uses:  actions/checkout@v2
+  steps:
+  -  uses:  actions/checkout@v2
 
-      -  name:  Set  up  Python  3.8.8
-        uses:  actions/setup-python@v2
-        with:
-          python-version:  3.8.8
+  -  name:  Set  up  Python  3.8.8
+    uses:  actions/setup-python@v2
+    with:
+      python-version:  3.8.8
 
-      -  name:  Install  pyinstaller
-        run:  pip  install  pyinstaller
+  -  name:  Install  pyinstaller
+    run:  pip  install  pyinstaller
 
-      -  name:  Build  for  Windows
-        run:  |
-          pyinstaller  --onefile  --platform  windows.x86_64  --add-data  'requirements.txt;.'  main.py
-          mkdir  -p  ./releases/windows
-          cp  -r  dist/main.exe  ./releases/windows
+  -  name:  Build  for  Windows
+    run:  |
+      pyinstaller  --onefile  --platform  windows.x86_64  --add-data  'requirements.txt;.'  main.py
+      mkdir  -p  ./releases/windows
+      cp  -r  dist/main.exe  ./releases/windows
 
-      -  name:  Build  for  macOS
-        run:  |
-          pyinstaller  --onefile  --platform  darwin.x86_64  --add-data  'requirements.txt;.'  main.py
-          mkdir  -p  ./releases/macos
-          cp  -r  dist/main.app  ./releases/macos
+  -  name:  Build  for  macOS
+    run:  |
+      pyinstaller  --onefile  --platform  darwin.x86_64  --add-data  'requirements.txt;.'  main.py
+      mkdir  -p  ./releases/macos
+      cp  -r  dist/main.app  ./releases/macos
 
-      -  name:  Build  for  Linux
-        run:  |
-          pyinstaller  --onefile  --platform  linux.x86_64  --add-data  'requirements.txt;.'  main.py
-          mkdir  -p  ./releases/linux
-          cp  -r  dist/main  ./releases/linux
+  -  name:  Build  for  Linux
+    run:  |
+      pyinstaller  --onefile  --platform  linux.x86_64  --add-data  'requirements.txt;.'  main.py
+      mkdir  -p  ./releases/linux
+      cp  -r  dist/main  ./releases/linux
 
-      -  name:  Create  Release
-        id:  create_release
-        uses:  actions/create-release@v1
-        env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-        with:
-          tag_name:  ${{  github.ref  }}
-          release_name:  Release  ${{  github.ref  }}
-          draft:  false
-          prerelease:  false
+  -  name:  Create  Release
+    id:  create_release
+    uses:  actions/create-release@v1
+    env:
+      GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+    with:
+      tag_name:  ${{  github.ref  }}
+      release_name:  Release  ${{  github.ref  }}
+      draft:  false
+      prerelease:  false
 
-      -  name:  Upload  Release  Assets
-        uses:  actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-        with:
-          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./releases/windows/main.exe
-          asset_name:  main-windows-x64.exe
-          asset_content_type:  application/octet-stream
+  -  name:  Upload  Release  Assets
+    uses:  actions/upload-release-asset@v1
+    env:
+      GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+    with:
+      upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+      asset_path:  ./releases/windows/main.exe
+      asset_name:  main-windows-x64.exe
+      asset_content_type:  application/octet-stream
 
-      -  name:  Upload  Release  Assets  (macOS)
-        uses:  actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-        with:
-          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./releases/macos/main.app
-          asset_name:  main-macos-x64.app.zip
-          asset_content_type:  application/zip
+  -  name:  Upload  Release  Assets  (macOS)
+    uses:  actions/upload-release-asset@v1
+    env:
+      GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+    with:
+      upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+      asset_path:  ./releases/macos/main.app
+      asset_name:  main-macos-x64.app.zip
+      asset_content_type:  application/zip
 
-      -  name:  Upload  Release  Assets  (Linux)
-        uses:  actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-        with:
-          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./releases/linux/main
-          asset_name:  main-linux-x64
-          asset_content_type:  application/octet-stream
+  -  name:  Upload  Release  Assets  (Linux)
+    uses:  actions/upload-release-asset@v1
+    env:
+      GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+    with:
+      upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+      asset_path:  ./releases/linux/main
+      asset_name:  main-linux-x64
+      asset_content_type:  application/octet-stream
