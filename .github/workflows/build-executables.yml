@@ -3,7 +3,7 @@ name:  Build  Executables
 on:
     push:
       branches:
-        -  main      #  or  your  specific  branch
+        -  main  #  or  your  specific  branch
     pull_request:
       branches:
         -  main
