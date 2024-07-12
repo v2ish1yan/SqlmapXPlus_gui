@@ -1,8 +1,12 @@
 name:  Build  and  Release
 
 on:
-    release:
-      create:  true
+    push:
+      branches:
+        -  main    #  or  your  specific  branch
+    pull_request:
+      branches:
+       -  main
 
 jobs:
     build-windows:
@@ -10,28 +14,28 @@ jobs:
       steps:
         -  uses:  actions/checkout@v2
         -  name:  Set  up  Python  3.8.8
-          uses:  actions/setup-python@v2
-          with:
+           uses:  actions/setup-python@v2
+           with:
             python-version:  3.8.8
         -  name:  Install  PyInstaller
-          run:  pip  install  pyinstaller
+           run:  pip  install  pyinstaller
         -  name:  Build  Executable  for  Windows
-          run:  pyinstaller  --onefile  main.py
+           run:  pyinstaller  --onefile  main.py
         -  name:  Create  Release
-          id:  create_release
-          uses:  actions/create-release@v1
-          env:
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
             GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-          with:
+           with:
             tag_name:  ${{  github.ref  }}
             release_name:  Release  ${{  github.ref  }}
             draft:  false
             prerelease:  false
         -  name:  Upload  Release  Asset  for  Windows
-          uses:  actions/upload-release-asset@v1
-          env:
+           uses:  actions/upload-release-asset@v1
+           env:
             GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-          with:
+           with:
             upload_url:  ${{  steps.create_release.outputs.upload_url  }}
             asset_path:  ./dist/main.exe
             asset_name:  main.exe
