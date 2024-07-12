@@ -1,61 +1,103 @@
-name:  Build  and  Release
+name:  Build  and  Release  Executables
 
 on:
     push:
       branches:
-        -  main    #  更改为你的默认分支名
+        -  main    #  更改为您想要触发工作流的分支
 
 jobs:
-    build:
+    build-windows:
+      runs-on:  windows-latest
+      steps:
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
+        -  name:  Build  Windows  Executable
+           run:  pyinstaller  --onefile  main.py
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  'v1.0.0'    #  更改为您的版本号
+            release_name:  'Windows  Executable'
+            draft:  false
+            prerelease:  false
+        -  name:  Upload  Release  Asset
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main.exe
+            asset_name:  main.exe
+            asset_content_type:  application/octet-stream
+
+    build-macos:
+      runs-on:  macos-latest
+      steps:
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
+        -  name:  Build  macOS  Executable
+           run:  pyinstaller  --onefile  main.py
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  'v1.0.0'    #  更改为您的版本号
+            release_name:  'macOS  Executable'
+            draft:  false
+            prerelease:  false
+        -  name:  Upload  Release  Asset
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main.app
+            asset_name:  main.app.zip
+            asset_content_type:  application/zip
+
+    build-linux:
       runs-on:  ubuntu-latest
       steps:
-      -  uses:  actions/checkout@v2
-
-      -  name:  Set  up  Python  3.x
-         uses:  actions/setup-python@v2
-         with:
-          python-version:  '3.x'
-
-      -  name:  Install  PyInstaller
-         run:  pip  install  pyinstaller
-
-      -  name:  Compile  to  Windows
-         run:  |
-          pyinstaller  -F   main.py
-          mkdir  -p  ./release/windows
-          mv  ./dist/main.exe  ./release/windows/
-
-      -  name:  Compile  to  macOS
-         if:  runner.os  ==  'macOS'
-         run:  |
-          pyinstaller  -F main.py
-          mkdir  -p  ./release/macos
-          mv  ./dist/main  ./release/macos/
-
-      -  name:  Compile  to  Linux
-         if:  runner.os  ==  'Linux'
-         run:  |
-          pyinstaller  -F main.py
-          mkdir  -p  ./release/linux
-          mv  ./dist/main  ./release/linux/
-
-      -  name:  Create  Release
-         id:  create_release
-         uses:  actions/create-release@v1
-         env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-         with:
-          tag_name:  ${{  github.ref  }}
-          release_name:  Release  ${{  github.ref  }}
-          draft:  false
-          prerelease:  false
-
-      -  name:  Upload  Release  Assets
-         uses:  actions/upload-release-asset@v1
-         env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-         with:
-          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./release/
-          asset_name: main-${{github.ref}}-${{  runner.os  }}.exe
-          asset_content_type:  application/octet-stream
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
+        -  name:  Build  Linux  Executable
+           run:  pyinstaller  --onefile  main.py
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  'v1.0.0'    #  更改为您的版本号
+            release_name:  'Linux  Executable'
+            draft:  false
+            prerelease:  false
+        -  name:  Upload  Release  Asset
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main
+            asset_name:  main-linux
+            asset_content_type:  application/octet-stream
