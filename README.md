@@ -6,7 +6,7 @@
 
 这是一个tkinter练手项目，也是我第一个gui项目，后续会慢慢完善功能选项
 
-参考本间白猫师傅的**[sqlmap-gui](https://github.com/honmashironeko/sqlmap-gui)**
+参考本间白猫师傅的[sqlmap-gui](https://github.com/honmashironeko/sqlmap-gui)
 
 预览
 
