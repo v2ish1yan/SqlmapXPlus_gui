@@ -34,7 +34,7 @@ jobs:
             GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
            with:
             upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./dist/main.exe
+            asset_path:  ./releases/win/main
             asset_name:  main.exe
             asset_content_type:  application/octet-stream
 
@@ -66,8 +66,8 @@ jobs:
             GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
            with:
             upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./dist/main.app
-            asset_name:  main.app.zip
+            asset_path:  ./releases/macos/main
+            asset_name:  main.app
             asset_content_type:  application/zip
 
     build-linux:
@@ -98,6 +98,6 @@ jobs:
             GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
            with:
             upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./dist/main
-            asset_name:  main-linux
+            asset_path:  ./releases/linux/main
+            asset_name:  main_linux
             asset_content_type:  application/octet-stream
