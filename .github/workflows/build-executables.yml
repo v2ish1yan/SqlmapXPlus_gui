@@ -3,7 +3,7 @@ name:  Build  Executables
 on:
     push:
       branches:
-        -  main    #  or  your  specific  branch
+        -  main      #  or  your  specific  branch
     pull_request:
       branches:
         -  main
@@ -12,38 +12,38 @@ jobs:
     build-windows:
       runs-on:  windows-latest
       steps:
-      -  uses:  actions/checkout@v2
-      -  name:  Set  up  Python
-        uses:  actions/setup-python@v2
-        with:
-          python-version:  '3.8.8'
-      -  name:  Install  pyinstaller
-        run:  pip  install  pyinstaller
-      -  name:  Build  executable  for  Windows
-        run:  pyinstaller  --onefile  main.py
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+          uses:  actions/setup-python@v2
+          with:
+            python-version:  '3.8.8'
+        -  name:  Install  pyinstaller
+          run:  pip  install  pyinstaller
+        -  name:  Build  executable  for  Windows
+          run:  pyinstaller  --onefile  main.py
 
     build-macos:
       runs-on:  macos-latest
       steps:
-      -  uses:  actions/checkout@v2
-      -  name:  Set  up  Python
-        uses:  actions/setup-python@v2
-        with:
-          python-version:  '3.8.8'
-      -  name:  Install  pyinstaller
-        run:  pip  install  pyinstaller
-      -  name:  Build  executable  for  macOS
-        run:  pyinstaller  --onefile  main.py
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+          uses:  actions/setup-python@v2
+          with:
+            python-version:  '3.8.8'
+        -  name:  Install  pyinstaller
+          run:  pip  install  pyinstaller
+        -  name:  Build  executable  for  macOS
+          run:  pyinstaller  --onefile  main.py
 
     build-linux:
       runs-on:  ubuntu-latest
       steps:
-      -  uses:  actions/checkout@v2
-      -  name:  Set  up  Python
-        uses:  actions/setup-python@v2
-        with:
-          python-version:  '3.8.8'
-      -  name:  Install  pyinstaller
-        run:  pip  install  pyinstaller
-      -  name:  Build  executable  for  Linux
-        run:  pyinstaller  --onefile  main.py
+        -  uses:  actions/checkout@v2
+        -  name:  Set  up  Python
+          uses:  actions/setup-python@v2
+          with:
+            python-version:  '3.8.8'
+        -  name:  Install  pyinstaller
+          run:  pip  install  pyinstaller
+        -  name:  Build  executable  for  Linux
+          run:  pyinstaller  --onefile  main.py
