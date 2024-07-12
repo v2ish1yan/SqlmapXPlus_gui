@@ -21,23 +21,23 @@ jobs:
 
       -  name:  Compile  to  Windows
          run:  |
-          pyinstaller  --onefile  --platform  windows.x86_64 main.py
+          pyinstaller  -F   main.py
           mkdir  -p  ./release/windows
-          mv  ./dist/your_script.exe  ./release/windows/
+          mv  ./dist/main.exe  ./release/windows/
 
       -  name:  Compile  to  macOS
          if:  runner.os  ==  'macOS'
          run:  |
-          pyinstaller  --onefile  --platform  darwin.x86_64 main.py
+          pyinstaller  -F main.py
           mkdir  -p  ./release/macos
-          mv  ./dist/your_script.exe  ./release/macos/
+          mv  ./dist/main  ./release/macos/
 
       -  name:  Compile  to  Linux
          if:  runner.os  ==  'Linux'
          run:  |
-          pyinstaller  --onefile  --platform  linux.x86_64 main.py
+          pyinstaller  -F main.py
           mkdir  -p  ./release/linux
-          mv  ./dist/your_script  ./release/linux/
+          mv  ./dist/main  ./release/linux/
 
       -  name:  Create  Release
          id:  create_release
