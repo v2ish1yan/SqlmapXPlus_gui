@@ -72,6 +72,20 @@ jobs:
             draft:  false
             prerelease:  false
 
+        -  name:  Prepare  release
+           id:  prepare_release
+           run:  |
+            echo  "::set-output  name=tag_name::${{  github.ref  }}"
+            echo  "::set-output  name=release_name::Release  for  ${{  matrix.os  }}"
+            echo  "::set-output  name=release_body::This  release  includes  the  executable  for  ${{  matrix.os  }}."
+
+        -  name:  Delete  existing  release  and  tag
+           run:  |
+            if  [  -n  "${{  steps.prepare_release.outputs.tag_name  }}"  ];  then
+             gh  release  delete  ${{  steps.prepare_release.outputs.tag_name  }}  --yes
+             git  tag  -d  ${{  steps.prepare_release.outputs.tag_name  }}
+             git  push  origin  :${{  steps.prepare_release.outputs.tag_name  }}
+            fi
         -  name:  Upload  Release  Asset  for  macOS
            uses:  actions/upload-release-asset@v1
            env:
