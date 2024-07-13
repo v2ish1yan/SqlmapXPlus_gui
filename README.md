@@ -1,8 +1,10 @@
 ## SqlmapXPlus_gui
 
-计划是SqlmapXPlus的gui工具
+计划是SqlmapXPlus的gui工具 [https://github.com/co01cat/SqlmapXPlus](https://github.com/co01cat/SqlmapXPlus)
 
-[https://github.com/co01cat/SqlmapXPlus](https://github.com/co01cat/SqlmapXPlus)
+将可执行文件放在sqlma.py同目录下执行即可，本项目的可执行文件皆为github action编译，放心食用
+
+在release里找符合自己操作系统的就行了
 
 这是一个tkinter练手项目，也是我第一个gui项目，后续会慢慢完善功能选项
 
