@@ -1,103 +1,50 @@
-name:  Build  and  Release  Executables
+name:  AutoRelease  Executable
 
 on:
     push:
       branches:
-        -  main    #  更改为您想要触发工作流的分支
+        -  main    #  你希望自动发布  Release  的分支
 
 jobs:
-    build-windows:
-      runs-on:  windows-latest
+    build-and-release:
+      runs-on:  ${{  matrix.os  }}
+      strategy:
+        matrix:
+          os:  [windows-latest,  macos-latest,  ubuntu-latest]
       steps:
-        -  uses:  actions/checkout@v2
-        -  name:  Set  up  Python
-           uses:  actions/setup-python@v2
-           with:
-            python-version:  '3.x'
-        -  name:  Install  PyInstaller
-           run:  pip  install  pyinstaller
-        -  name:  Build  Windows  Executable
-           run:  pyinstaller  --onefile  main.py
-        -  name:  Create  Release
-           id:  create_release
-           uses:  actions/create-release@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            tag_name:  'v1.0.0'    #  更改为您的版本号
-            release_name:  'Windows  Executable'
-            draft:  false
-            prerelease:  false
-        -  name:  Upload  Release  Asset
-           uses:  actions/upload-release-asset@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./releases/win/main
-            asset_name:  main.exe
-            asset_content_type:  application/octet-stream
+      -  uses:  actions/checkout@v2
 
-    build-macos:
-      runs-on:  macos-latest
-      steps:
-        -  uses:  actions/checkout@v2
-        -  name:  Set  up  Python
-           uses:  actions/setup-python@v2
-           with:
-            python-version:  '3.x'
-        -  name:  Install  Pyinstaller
-           run:  pip  install  pyinstaller
-        -  name:  Build  macOS  Executable
-           run:  pyinstaller  --onefile  main.py
-        -  name:  Create  Release
-           id:  create_release
-           uses:  actions/create-release@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            tag_name:  'v1.0.0'    #  更改为您的版本号
-            release_name:  'macOS  Executable'
-            draft:  false
-            prerelease:  false
-        -  name:  Upload  Release  Asset
-           uses:  actions/upload-release-asset@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./releases/macos/main
-            asset_name:  main.app
-            asset_content_type:  application/zip
+      -  name:  Set  up  Python
+         uses:  actions/setup-python@v2
+         with:
+          python-version:  3.x
 
-    build-linux:
-      runs-on:  ubuntu-latest
-      steps:
-        -  uses:  actions/checkout@v2
-        -  name:  Set  up  Python
-           uses:  actions/setup-python@v2
-           with:
-            python-version:  '3.x'
-        -  name:  Install  PyInstaller
-           run:  pip  install  pyinstaller
-        -  name:  Build  Linux  Executable
-           run:  pyinstaller  --onefile  main.py
-        -  name:  Create  Release
-           id:  create_release
-           uses:  actions/create-release@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            tag_name:  'v1.0.0'    #  更改为您的版本号
-            release_name:  'Linux  Executable'
-            draft:  false
-            prerelease:  false
-        -  name:  Upload  Release  Asset
-           uses:  actions/upload-release-asset@v1
-           env:
-            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-           with:
-            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-            asset_path:  ./releases/linux/main
-            asset_name:  main_linux
-            asset_content_type:  application/octet-stream
+      -  name:  Install  pyinstaller
+         run:  pip  install  pyinstaller
+
+      -  name:  Create  executable
+         run:  |
+          pyinstaller  --onefile  main.py
+          mkdir  -p  ./release/${{  matrix.os  }}
+          mv  dist/main  ./release/${{  matrix.os  }}/main-${{  matrix.os  }}
+
+      -  name:  Create  Release
+         id:  create_release
+         uses:  actions/create-release@v1
+         env:
+          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+         with:
+          tag_name:  v${{  github.ref  }}
+          release_name:  Release  v${{  github.ref  }}
+          draft:  false
+          prerelease:  false
+
+      -  name:  Upload  Release  Asset
+         uses:  actions/upload-release-asset@v1
+         env:
+          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+         with:
+          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+          asset_path:  ./release/${{  matrix.os  }}/main-${{  matrix.os  }}
+          asset_name:  main-${{  matrix.os  }}
+          asset_content_type:  application/octet-stream
