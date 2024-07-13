@@ -1,9 +1,9 @@
-name:  Release  Build
+name:  Build  and  Release  Executables
 
 on:
     push:
-      tags:
-        -  'v*'
+      branches:
+        -  main    #  or  your  default  branch
 
 jobs:
     build-and-release:
@@ -12,8 +12,7 @@ jobs:
         matrix:
           os:  [windows-latest,  macos-latest,  ubuntu-latest]
       steps:
-      -  name:  Checkout  code
-         uses:  actions/checkout@v2
+      -  uses:  actions/checkout@v2
 
       -  name:  Set  up  Python
          uses:  actions/setup-python@v2
@@ -23,8 +22,10 @@ jobs:
       -  name:  Install  PyInstaller
          run:  pip  install  pyinstaller
 
-      -  name:  Build  executable
-         run:  pyinstaller  --onefile  main.py
+      -  name:  Build  Executable
+         run:  |
+          pyinstaller  --onefile  --windowed  main.py
+          mv  dist/main  dist/main_${{  matrix.os.replace('-',  '_')  }}.exe
 
       -  name:  Prepare  Release
          id:  create_release
@@ -32,8 +33,8 @@ jobs:
          env:
           GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
          with:
-          tag_name:  ${{  github.ref  }}
-          release_name:  Release  ${{  github.ref  }}
+          tag_name:  'v${{  github.ref  }}'
+          release_name:  'Release  v${{  github.ref  }}'
           draft:  false
           prerelease:  false
 
@@ -43,6 +44,6 @@ jobs:
           GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
          with:
           upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./dist/main.exe
-          asset_name:  main-${{  matrix.os  }}.exe
+          asset_path:  ./dist/main_${{  matrix.os.replace('-',  '_')  }}.exe
+          asset_name:  main_${{  matrix.os.replace('-',  '_')  }}.exe
           asset_content_type:  application/octet-stream
