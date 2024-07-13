@@ -1,49 +1,121 @@
-name:  Build  and  Release  Executables
+name:  Publish  Releases
 
 on:
     push:
-      branches:
-        -  main    #  or  your  default  branch
+      tags:
+        -  'v*'
 
 jobs:
-    build-and-release:
-      runs-on:  ${{  matrix.os  }}
-      strategy:
-        matrix:
-          os:  [windows-latest,  macos-latest,  ubuntu-latest]
+    build-and-release-windows:
+      runs-on:  windows-latest
       steps:
-      -  uses:  actions/checkout@v2
+        -  name:  Checkout
+           uses:  actions/checkout@v2
 
-      -  name:  Set  up  Python
-         uses:  actions/setup-python@v2
-         with:
-          python-version:  '3.x'
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
 
-      -  name:  Install  PyInstaller
-         run:  pip  install  pyinstaller
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
 
-      -  name:  Build  Executable
-         run:  |
-          pyinstaller  --onefile  --windowed  main.py
-          mv  dist/main  dist/main_${{  matrix.os.replace('-',  '_')  }}.exe
+        -  name:  Build  Executable  for  Windows
+           run:  pyinstaller  --onefile  --windowed  main.py  -n  main_win.exe
 
-      -  name:  Prepare  Release
-         id:  create_release
-         uses:  actions/create-release@v1
-         env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-         with:
-          tag_name:  'v${{  github.ref  }}'
-          release_name:  'Release  v${{  github.ref  }}'
-          draft:  false
-          prerelease:  false
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  ${{  github.ref  }}
+            release_name:  Release  ${{  github.ref  }}
+            draft:  false
+            prerelease:  false
 
-      -  name:  Upload  Release  Asset
-         uses:  actions/upload-release-asset@v1
-         env:
-          GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
-         with:
-          upload_url:  ${{  steps.create_release.outputs.upload_url  }}
-          asset_path:  ./dist/main_${{  matrix.os.replace('-',  '_')  }}.exe
-          asset_name:  main_${{  matrix.os.replace('-',  '_')  }}.exe
-          asset_content_type:  application/octet-stream
+        -  name:  Upload  Release  Asset  for  Windows
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main_win.exe
+            asset_name:  main_win.exe
+            asset_content_type:  application/octet-stream
+
+    build-and-release-macos:
+      runs-on:  macos-latest
+      steps:
+        -  name:  Checkout
+           uses:  actions/checkout@v2
+
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
+
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
+
+        -  name:  Build  Executable  for  macOS
+           run:  pyinstaller  --onefile  main.py  -n  main_macos
+
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  ${{  github.ref  }}
+            release_name:  Release  ${{  github.ref  }}
+            draft:  false
+            prerelease:  false
+
+        -  name:  Upload  Release  Asset  for  macOS
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main_macos
+            asset_name:  main_macos
+            asset_content_type:  application/octet-stream
+
+    build-and-release-linux:
+      runs-on:  ubuntu-latest
+      steps:
+        -  name:  Checkout
+           uses:  actions/checkout@v2
+
+        -  name:  Set  up  Python
+           uses:  actions/setup-python@v2
+           with:
+            python-version:  '3.x'
+
+        -  name:  Install  PyInstaller
+           run:  pip  install  pyinstaller
+
+        -  name:  Build  Executable  for  Linux
+           run:  pyinstaller  --onefile  main.py  -n  main_linux
+
+        -  name:  Create  Release
+           id:  create_release
+           uses:  actions/create-release@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            tag_name:  ${{  github.ref  }}
+            release_name:  Release  ${{  github.ref  }}
+            draft:  false
+            prerelease:  false
+
+        -  name:  Upload  Release  Asset  for  Linux
+           uses:  actions/upload-release-asset@v1
+           env:
+            GITHUB_TOKEN:  ${{  secrets.GITHUB_TOKEN  }}
+           with:
+            upload_url:  ${{  steps.create_release.outputs.upload_url  }}
+            asset_path:  ./dist/main_linux
+            asset_name:  main_linux
+            asset_content_type:  application/octet-stream
