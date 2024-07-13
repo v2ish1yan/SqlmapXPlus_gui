@@ -2,8 +2,8 @@ name:  Publish  Releases
 
 on:
     push:
-      tags:
-        -  'v*'
+      branches:
+        -  main    #  or  your  default  branch
 
 jobs:
     build-and-release-windows:
