@@ -215,8 +215,7 @@ class Page1(tk.Frame):
 
         self.sqlmap_text=tk.Text(self,wrap='word')
         self.sqlmap_text.grid(row=6, column=1, sticky='wnse',columnspan=6,rowspan=14)
-
-    #sqlmap帮助
+    ##sqlmap帮助
     def sqlmap_help(self):
         cmd = ["python", "-Xfrozen_modules=off", "sqlmap.py", "-hh"]
         os.system(" ".join(cmd))
@@ -295,8 +294,8 @@ class Page1(tk.Frame):
         self.command_output.insert(tk.END, " ".join(display))
 
         #执行完成后，将有漏洞的记录转移到新日志目录
-        source_path = f"C:\\Users\\{getpass.getuser()}\\AppData\\Local\\sqlmap\\output"
-        dest_path = f"C:\\Users\\{getpass.getuser()}\\AppData\\Local\\sqlmap\\vulnout"
+        source_path = f"/Users/{getpass.getuser()}/.local/share/sqlmap/output"
+        dest_path = f"/Users/{getpass.getuser()}/.local/share/sqlmap/vulnout"
         self.move_log_directories(source_path,dest_path)
 
     #筛选有漏洞的目标记录
@@ -331,10 +330,7 @@ class Page1(tk.Frame):
 
 
 
-        # p = sub.Popen('python sqlmap.py -h', stdout=sub.PIPE, stderr=sub.PIPE)
-        # output, errors = p.communicate()
-        # self.result_text.insert(tk.END, output)
-        # print(output, errors)
+
 
 
 # 页面二
@@ -351,7 +347,7 @@ class Page2(tk.Frame):
         get_button.grid(row=0, column=2, sticky='w')
         self.target_log = tk.StringVar()
         #读取有漏洞的历史记录
-        self.target_path = f"C:\\Users\\{getpass.getuser()}\\AppData\\Local\\sqlmap\\vulnout"
+        self.target_path = f"/Users/{getpass.getuser()}/.local/share/sqlmap/vulnout"
         file_list=os.listdir(self.target_path)
         log_combo = ttk.Combobox(self, values=[str(i) for i in file_list], textvariable=self.target_log,width=30,state='readonly')
         log_combo.grid(row=1, column=0, sticky='n',columnspan=3,rowspan=1)
@@ -362,20 +358,20 @@ class Page2(tk.Frame):
         #读取log文件并输出
         self.log_file = tk.StringVar()
         if self.target_log.get():
-            with open(f"{self.target_path}\\{self.target_log.get()}\\log","r",encoding="utf-8") as f:
+            with open(f"{self.target_path}/{self.target_log.get()}/log","r",encoding="utf-8") as f:
                 self.log_file.set(f.read())
                 f.close()
                 self.log_output_text.insert(tk.END, self.log_file.get())
 
     def refresh(self):
         #重建一个单选框
-        self.target_path = f"C:\\Users\\{getpass.getuser()}\\AppData\\Local\\sqlmap\\vulnout"
+        self.target_path = f"/Users/{getpass.getuser()}/.local/share/sqlmap/vulnout"
         file_list=os.listdir(self.target_path)
         log_combo = ttk.Combobox(self, values=[str(i) for i in file_list], textvariable=self.target_log,width=30,state='readonly')
         log_combo.grid(row=1, column=0, sticky='n',columnspan=3,rowspan=1)
     def get(self):
         if self.target_log.get():
-            with open(f"{self.target_path}\\{self.target_log.get()}\\log","r",encoding="utf-8") as f:
+            with open(f"{self.target_path}/{self.target_log.get()}/log","r",encoding="utf-8") as f:
                 self.log_file.set(f.read())
                 f.close()
                 self.log_output_text.delete(1.0, tk.END)

@@ -218,7 +218,7 @@ class Page1(tk.Frame):
 
     #sqlmap帮助
     def sqlmap_help(self):
-        cmd = ["python", "-Xfrozen_modules=off", "sqlmap.py", "-hh"]
+        cmd = ["python3", "-Xfrozen_modules=off", "sqlmap.py", "-hh"]
         os.system(" ".join(cmd))
     #基础扫描
     def run_command(self):
@@ -251,7 +251,7 @@ class Page1(tk.Frame):
             'o': self.optimizations_var.get(),
             'p': self.testable_param_var.get()
         }
-        cmd = ["start", "cmd", "/k", "python", "-Xfrozen_modules=off", "sqlmap.py"]
+        cmd = ["start", "cmd", "/k", "python3", "-Xfrozen_modules=off", "sqlmap.py"]
         #判断是否使用url进行扫描
         if "http" in self.sqlmap_text.get("1.0","1.5"):
             cmd.append("-u")
@@ -331,7 +331,7 @@ class Page1(tk.Frame):
 
 
 
-        # p = sub.Popen('python sqlmap.py -h', stdout=sub.PIPE, stderr=sub.PIPE)
+        # p = sub.Popen('python3 sqlmap.py -h', stdout=sub.PIPE, stderr=sub.PIPE)
         # output, errors = p.communicate()
         # self.result_text.insert(tk.END, output)
         # print(output, errors)
